@@ -1,0 +1,12 @@
+MyGui := Gui()
+; MyGui.Add("Text", "section", "Files path")  ; Save this control's position and start a new section.
+; FilesPath := MyGui.Add("Edit", "ys w350", "C:\Dev\ahk\*")
+FilesPath := MyGui.Add("Edit", "w350", "C:\Dev\ahk\*")
+; ExitButton := MyGui.AddButton("Default w80", "Exit")
+
+Loop Files, "C:\Dev\ahk\*"
+    NewButton := MyGui.AddButton("Default w80 x+10", A_LoopFileName)
+    NewButton.OnEvent("Click", (*) => Run(A_LoopFileFullPath))
+    ; MyGui.Add("Text", "section", "Files path")  ; Save this control's position and start a new section.
+
+MyGui.Show()
