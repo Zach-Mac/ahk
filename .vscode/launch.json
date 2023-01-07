@@ -6,7 +6,7 @@
 	"configurations": [
 		{
 			"name": "AutoHotkey Debug (Advanced Configuration)",
-			"runtime": "v2/AutoHotkey.exe",
+			// "runtime": "v2/AutoHotkey.exe",
 			"runtime_v1": "v1.1.36.02/AutoHotkeyU64.exe",
 			"runtime_v2": "v2/AutoHotkey.exe",
 			"type": "autohotkey",
