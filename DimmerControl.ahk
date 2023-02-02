@@ -21,7 +21,6 @@ OpenDimmer()
 
 CloseDimmer()
 {
-    tooltip closing
     global lastWinId
         ; WinHide, Dimmer
         WinActivate ahk_id %lastWinId%
@@ -64,7 +63,6 @@ SetUpDown(){
 
 Open3:
 !3::
-    tooltip Alt P
     OpenDimmer()
     SetUpDown()
     ; BrightDown(10)
@@ -72,7 +70,6 @@ Open3:
 
 Open4:
 !4::
-    tooltip Alt P
     OpenDimmer()
     SetUpDown()
     ; BrightDown(1)
@@ -80,7 +77,6 @@ Open4:
 
 Open5:
 !5::
-    tooltip Alt P
     OpenDimmer()
     SetUpDown()
     ; BrightUp(1)
@@ -88,14 +84,12 @@ Open5:
 
 Open6:
 !6::
-    tooltip Alt P
     OpenDimmer()
     SetUpDown()
     ; BrightUp(10)
     return
 
 ~Alt up::
-    tooltip Alt released
     CloseDimmer()
     SetDim()
     return
