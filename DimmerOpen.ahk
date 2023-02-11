@@ -19,6 +19,8 @@ If  !(exstyle & 0x00000080)        ; visible on all desktops
 
 Click, 154 230
 
+Click, 63 230
+
 WinActivate ahk_id %winid%
 
 SetMouseDelay, -1

@@ -3,27 +3,23 @@
 SendMode, Input
 SetBatchLines, -1
 SetWorkingDir, %A_ScriptDir%
+SetTitleMatchMode, 3
 
 lastWinId = ""
-
-OpenDimmer()
-{
+OpenDimmer(){
     global lastWinId
     if WinExist("ahk_exe Dimmer.exe") {
         WinGet, lastWinId ,, A
 
-        WinShow, Dimmer
-        WinActivate, Dimmer
+        WinActivate Dimmer
     } else {
         Run, C:\ProgramExes\DimmerOpen.ahk.exe
     }
 }
 
-CloseDimmer()
-{
+CloseDimmer(){
     global lastWinId
-        ; WinHide, Dimmer
-        WinActivate ahk_id %lastWinId%
+    WinActivate ahk_id %lastWinId%
 }
 
 BrightDown(n){
@@ -33,63 +29,14 @@ BrightUp(n){
     Send {Right %n%}
 }
 
-Down10:
-    BrightDown(10)
-    return
-Down1:
-    BrightDown(1)    
-    return
-Up1:
-    BrightUp(1)
-    return
-Up10:
-    BrightUp(10)
-    return
 
-SetDim(){
-    Hotkey, !3, Open3
-    Hotkey, !4, Open4
-    Hotkey, !5, Open5
-    Hotkey, !6, Open6
-}
-SetDim()
+#+D::OpenDimmer()
 
-SetUpDown(){
-    Hotkey, !3, Down10
-    Hotkey, !4, Down1
-    Hotkey, !5, Up1
-    Hotkey, !6, Up10
-}
+#IfWinActive Dimmer
+!4::BrightDown(1)
 
-Open3:
-!3::
-    OpenDimmer()
-    SetUpDown()
-    ; BrightDown(10)
-    return
+!5::BrightUp(1)
 
-Open4:
-!4::
-    OpenDimmer()
-    SetUpDown()
-    ; BrightDown(1)
-    return
+~Alt up::CloseDimmer()
+#IfWinActive 
 
-Open5:
-!5::
-    OpenDimmer()
-    SetUpDown()
-    ; BrightUp(1)
-    return
-
-Open6:
-!6::
-    OpenDimmer()
-    SetUpDown()
-    ; BrightUp(10)
-    return
-
-~Alt up::
-    CloseDimmer()
-    SetDim()
-    return
