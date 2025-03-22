@@ -1,7 +1,7 @@
 ; #InstallKeybdHook
 ; #InstallMouseHook
 
-; #SingleInstance force
+#SingleInstance force
 ; FileGetTime ScriptStartModTime, %A_ScriptFullPath%
 ; SetTimer CheckScriptUpdate, 100, 0x7FFFFFFF ; 100 ms, highest priority
 ; CheckScriptUpdate() {
