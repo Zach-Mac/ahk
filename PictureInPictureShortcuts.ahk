@@ -1,4 +1,4 @@
-; Shortcuts:
+; Show Picture-in-Picture window on all desktops and add shortcuts:
 ; Win+Alt+P   - Activate PiP window
 ; Win+Alt+F   - Activate PiP + fullscreen + unmute
 ; Win+Alt+T   - Return to source tab
@@ -7,8 +7,22 @@
 ; Win+Ctrl+Dn - Mute (returns to previous window)
 
 #SingleInstance force
+DetectHiddenText, On
 
 global PIP_WINDOW := "Picture-in-Picture ahk_class MozillaDialogClass ahk_exe firefox.exe"
+
+SetTimer, ShowAllDesktops, 500 
+Return 
+
+ShowAllDesktops:
+if WinExist(PIP_WINDOW) {
+    WinGet, exstyle, ExStyle
+    If  !(exstyle & 0x00000080)
+        WinSet, exstyle, 0x00000080
+}
+return
+
+
 
 ActivatePictureInPicture() {
     WinActivate, %PIP_WINDOW%
