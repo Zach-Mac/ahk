@@ -1,10 +1,12 @@
 ; Show Picture-in-Picture window on all desktops and add shortcuts:
-; Win+Alt+P   - Activate PiP window
-; Win+Alt+F   - Activate PiP + fullscreen + unmute
-; Win+Alt+T   - Return to source tab
-; Win+Ctrl+A  - Show currently active window on all desktops
-; Win+Ctrl+Up - Unmute (returns to previous window)
-; Win+Ctrl+Dn - Mute (returns to previous window)
+; Win+`         - Activate PiP window
+; Win+Alt+P     - Activate PiP window
+; Win+Capslock  - Pause/Unpause (returns to previous window)
+; Win+Ctrl+Up   - Unmute (returns to previous window)
+; Win+Ctrl+Dn   - Mute (returns to previous window)
+; Win+Alt+F     - Activate PiP + fullscreen + unmute
+; Win+Alt+T     - Return to source tab
+; Win+Ctrl+A    - Show currently active window on all desktops
 
 #SingleInstance force
 DetectHiddenText, On
@@ -23,14 +25,28 @@ if WinExist(PIP_WINDOW) {
 return
 
 
-
 ActivatePictureInPicture() {
     WinActivate, %PIP_WINDOW%
     WinWaitActive, %PIP_WINDOW%
 }
-#!p:: ; Windows+Alt+P to activate Picture-in-Picture window
+
+
+#!p:: 
+#`:: ; Windows+Alt+P OR Windows+` to activate Picture-in-Picture window
 {
     ActivatePictureInPicture()
+    return
+}
+
+
+#Capslock:: ; Windows+Capslock to activate PiP and pause
+{
+    WinGet, previousWindow, ID, A  ; Store current active window
+    ActivatePictureInPicture()
+    if WinActive(PIP_WINDOW) {
+        Send, {Space}
+        WinActivate, ahk_id %previousWindow%  ; Restore previous window
+    }
     return
 }
 
