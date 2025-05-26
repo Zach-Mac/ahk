@@ -6,23 +6,45 @@
 ; Win+Ctrl+Dn   - Mute (returns to previous window)
 ; Win+Alt+F     - Activate PiP + fullscreen + unmute
 ; Win+Alt+T     - Return to source tab
-; Win+Ctrl+A    - Show currently active window on all desktops
 
 #SingleInstance force
+
+; FileGetTime ScriptStartModTime, %A_ScriptFullPath%
+; SetTimer CheckScriptUpdate, 100, 0x7FFFFFFF ; 100 ms, highest priority
+; CheckScriptUpdate() {
+;     global ScriptStartModTime
+;     FileGetTime curModTime, %A_ScriptFullPath%
+;     if (curModTime == ScriptStartModTime)
+;         return
+;     SetTimer CheckScriptUpdate, Off
+;     loop {
+;         reload
+;         Sleep 300 ; ms
+;         MsgBox 0x2, %A_ScriptName%, Reload failed. ; 0x2 = Abort/Retry/Ignore
+;         IfMsgBox Abort
+;         ExitApp
+;         IfMsgBox Ignore
+;         break
+;     } ; loops reload on "Retry"
+; }
+
+
 DetectHiddenText, On
 
 global PIP_WINDOW := "Picture-in-Picture ahk_class MozillaDialogClass ahk_exe firefox.exe"
 
-SetTimer, ShowAllDesktops, 500 
-Return 
-
-ShowAllDesktops:
-if WinExist(PIP_WINDOW) {
-    WinGet, exstyle, ExStyle
-    If  !(exstyle & 0x00000080)
-        WinSet, exstyle, 0x00000080
-}
 return
+
+SetTimer, % () => ShowWindowOnAllDesktops(PIP_WINDOW), 500
+Return
+
+ShowWindowOnAllDesktops(WindowTitle) {
+    if WinExist(WindowTitle) {
+        WinGet, exstyle, ExStyle, %WindowTitle%
+        if !(exstyle & 0x00000080)
+            WinSet, ExStyle, 0x00000080, %WindowTitle%
+    }
+}
 
 
 ActivatePictureInPicture() {
@@ -31,15 +53,15 @@ ActivatePictureInPicture() {
 }
 
 
-#!p:: 
-#`:: ; Windows+Alt+P OR Windows+` to activate Picture-in-Picture window
+#!p:: ; Activate Picture-in-Picture window
+#`:: ; Activate Picture-in-Picture window
 {
     ActivatePictureInPicture()
     return
 }
 
 
-#Capslock:: ; Windows+Capslock to activate PiP and pause
+#Capslock:: ; Activate PiP and pause
 {
     WinGet, previousWindow, ID, A  ; Store current active window
     ActivatePictureInPicture()
@@ -50,7 +72,7 @@ ActivatePictureInPicture() {
     return
 }
 
-#!f:: ; Windows+Alt+F to activate Picture-in-Picture window, fullscreen and unmute
+#!f:: ; Activate Picture-in-Picture window, fullscreen and unmute
 {
     ActivatePictureInPicture()
     if WinActive(PIP_WINDOW) {
@@ -69,36 +91,13 @@ ReturnToTab() {
         MouseMove, %oldX%, %oldY%  ; Restore mouse position
     }
 }
-#!t:: ; Windows+Alt+T to return to source tab
+#!t:: ; Return to source tab
 {
     ReturnToTab()
     return
 }
 
-ShowWindowOnAllDesktops() {
-    centerWindowX := 270
-    centerWindowY := 270
-    rightClickMenuRightMovement := 20
-    rightClickMenuDownMovement := 120
-    
-    Send, #{Tab}
-    MouseMove, centerWindowX, centerWindowY
-    Sleep, 1000
-    Click, right
-    Sleep, 500
-    MouseMove, rightClickMenuRightMovement+centerWindowX, rightClickMenuDownMovement+centerWindowY
-    Sleep, 500
-    Click
-    Sleep, 100
-    Send, {Esc}
-}
-#^a:: ; Win+Ctrl+A show window on all desktops
-{
-    ShowWindowOnAllDesktops()
-    return
-}
-
-#^Up:: ; Ctrl+Windows+Up to unmute
+#^Up:: ; Unmute
 {
     WinGet, previousWindow, ID, A  ; Store current active window
     ActivatePictureInPicture()
@@ -109,7 +108,7 @@ ShowWindowOnAllDesktops() {
     return
 }
 
-#^Down:: ; Ctrl+Windows+Down to mute
+#^Down:: ; Mute
 {
     WinGet, previousWindow, ID, A  ; Store current active window
     ActivatePictureInPicture()
@@ -129,3 +128,5 @@ ShowWindowOnAllDesktops() {
 ;     }
 ;     catch exc
 ;         MsgBox % "Could not conduct the search due to the following error:`n" exc.Message
+
+
