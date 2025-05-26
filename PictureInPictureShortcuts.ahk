@@ -33,13 +33,13 @@ DetectHiddenText, On
 
 global PIP_WINDOW := "Picture-in-Picture ahk_class MozillaDialogClass ahk_exe firefox.exe"
 
-return
 
-SetTimer, % () => ShowWindowOnAllDesktops(PIP_WINDOW), 500
+SetTimer, ShowWindowOnAllDesktops, 500
 Return
 
-ShowWindowOnAllDesktops(WindowTitle) {
-    if WinExist(WindowTitle) {
+ShowWindowOnAllDesktops() {
+    global PIP_WINDOW
+    if WinExist(PIP_WINDOW) {
         WinGet, exstyle, ExStyle, %WindowTitle%
         if !(exstyle & 0x00000080)
             WinSet, ExStyle, 0x00000080, %WindowTitle%
