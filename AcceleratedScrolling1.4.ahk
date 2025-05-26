@@ -7,6 +7,26 @@
 #SingleInstance
 #MaxHotkeysPerInterval 120
 
+FileGetTime ScriptStartModTime, %A_ScriptFullPath%
+SetTimer CheckScriptUpdate, 100, 0x7FFFFFFF ; 100 ms, highest priority
+CheckScriptUpdate() {
+    global ScriptStartModTime
+    FileGetTime curModTime, %A_ScriptFullPath%
+    if (curModTime == ScriptStartModTime)
+        return
+    SetTimer CheckScriptUpdate, Off
+    loop {
+        reload
+        Sleep 300 ; ms
+        MsgBox 0x2, %A_ScriptName%, Reload failed. ; 0x2 = Abort/Retry/Ignore
+        IfMsgBox Abort
+        ExitApp
+        IfMsgBox Ignore
+        break
+    } ; loops reload on "Retry"
+}
+
+
 Process, Priority, , H
 SendMode Input
 
@@ -21,15 +41,21 @@ timeout := 500
 ; If you scroll a long distance in one session, apply additional boost factor.
 ; The higher the value, the longer it takes to activate, and the slower it accumulates.
 ; Set to zero to disable completely. Default: 30.
-boost := 30
+boost := 60
 
 ; Spamming applications with hundreds of individual scroll events can slow them down.
 ; This sets the maximum number of scrolls sent per click, i.e. max velocity. Default: 60.
-limit := 60
+limit := 100
 
 ; Runtime variables. Do not modify.
 distance := 0
 vmax := 1
+
+level1 := 50
+level2 := 16
+
+level2Streak := 0
+level2StreakNeeded := 2
 
 ; Key bindings
 WheelUp::    Goto Scroll
@@ -46,7 +72,21 @@ Scroll:
 
 		; Calculate acceleration factor using a 1/x curve
 		; v := (t < 80 && t > 1) ? (250.0 / t) - 1 : 1
-		v := (t < 50 && t > 1) ? 4 : 1
+        ; Multiple levels 
+
+        v := 1
+        if (t > 1) {
+            if (t <= level2) 
+                level2Streak++
+            else 
+                level2Streak := 0
+
+            if (level2Streak >= level2StreakNeeded)
+                v := 8
+            else if (t < level1)
+                v := 4
+        }
+		; v := (t < 50 && t > 1) ? 4 : 1
 
 		; Apply boost
 		if (boost > 1 && distance > boost)
@@ -66,6 +106,8 @@ Scroll:
 
 		if (v > 1 && tooltips)
 			QuickToolTip(v, timeout)
+            ; QuickToolTip("streak: " level2Streak " / " level2StreakNeeded " t: " t " v: " v, timeout)
+			; QuickToolTip(t, timeout)
             ; QuickToolTip("�"v, timeout)
 
 		MouseClick, %A_ThisHotkey%, , , v
